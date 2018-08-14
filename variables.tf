@@ -16,6 +16,9 @@ variable "key_name" {
 variable "gitlab_url" {
   description = "Gitlab external url, format is (http://...)"
 }
+variable "gitlab_docker_image" {
+  description = "Gitlab docker image"
+}
 variable "db_name" {
   description = "Database name"
 }

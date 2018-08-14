@@ -1,11 +1,11 @@
-
 resource "aws_instance" "gitlab_nfs" {
   ami                    = "${var.ami}"
-  instance_type          = "t2.micro"
+  instance_type          = "i3.xlarge"
   key_name               = "${var.key_name}"
   vpc_security_group_ids = ["${var.security_group_ids}"]
   subnet_id              = "${var.subnet_id}"
   user_data              = "${data.template_file.userdata.rendered}"
+  ebs_optimized          = true
 
   tags {
     Category = "gitlab"

@@ -10,7 +10,7 @@ resource "aws_elasticache_subnet_group" "private" {
 resource "aws_elasticache_cluster" "gitlab" {
   cluster_id           = "gitlab"
   engine               = "redis"
-  node_type            = "cache.t2.micro"
+  node_type            = "cache.m3.xlarge"
   num_cache_nodes      = 1
   parameter_group_name = "default.redis4.0"
   port                 = 6379

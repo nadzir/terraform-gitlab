@@ -2,7 +2,7 @@ resource "aws_launch_configuration" "gitlab_host_launch" {
   image_id        = "${var.ami}"
   instance_type   = "${var.instance_size}"
   security_groups = ["${var.security_group_ids}"]
-  key_name        = "${var.key_pair}"
+  key_name        = "${var.key_name}"
   user_data       = "${data.template_file.userdata.rendered}"
 }
 

@@ -9,9 +9,9 @@ resource "aws_elb" "gitlab" {
 
   health_check {
     healthy_threshold   = 3
-    unhealthy_threshold = 2
+    unhealthy_threshold = 5
     timeout             = 5
-    interval            = 60
+    interval            = 10
     target              = "HTTP:80/explore"
   }
 

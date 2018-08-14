@@ -19,9 +19,10 @@ module "subnet" {
 }
 
 module "gateway" {
-  source           = "./module/gateway"
-  vpc_id           = "${module.vpc.vpc_id}"
-  public_subnet_id = "${module.subnet.public_subnet_id_a}"
+  source             = "./module/gateway"
+  vpc_id             = "${module.vpc.vpc_id}"
+  public_subnet_id_a = "${module.subnet.public_subnet_id_a}"
+  public_subnet_id_b = "${module.subnet.public_subnet_id_b}"
 }
 
 module "security" {
@@ -37,7 +38,8 @@ module "routing" {
   private_subnet_id_a = "${module.subnet.private_subnet_id_a}"
   private_subnet_id_b = "${module.subnet.private_subnet_id_b}"
   internet_gateway_id = "${module.gateway.internet_gateway_id}"
-  nat_gateway_id      = "${module.gateway.nat_gateway_id}"
+  nat_gateway_id_a    = "${module.gateway.nat_gateway_id_a}"
+  nat_gateway_id_b    = "${module.gateway.nat_gateway_id_b}"
 }
 
 module "bastion" {
@@ -83,6 +85,8 @@ module "nfs" {
 module "gitlab" {
   source              = "./module/gitlab"
   security_group_ids  = ["${module.security.vpc_security_group_id}", "${module.security.mount_security_group_id}"]
+  key_name            = "${var.key_name}"
+  ami                 = "${var.ami}"
   nfs_ip              = "${module.nfs.nfs_ip}"
   rds_endpoint        = "${module.rds.rds_endpoint}"
   redis_host          = "${module.cache.redis_host}"
@@ -92,4 +96,9 @@ module "gitlab" {
   private_subnet_id_b = "${module.subnet.private_subnet_id_b}"
   availability_zone_a = "${var.availability_zone_a}"
   availability_zone_b = "${var.availability_zone_b}"
+  gitlab_url          = "${var.gitlab_url}"
+  gitlab_docker_image = "${var.gitlab_docker_image}"
+  db_name             = "${var.db_name}"
+  db_user             = "${var.db_user}"
+  db_password         = "${var.db_password}"
 }
