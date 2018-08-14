@@ -1,0 +1,41 @@
+resource "aws_instance" "gitlab_host" {
+  instance_type          = "${var.instance_size}"
+  ami                    = "${var.ami}"
+  key_name               = "${var.key_pair}"
+  vpc_security_group_ids = ["${var.security_group_ids}"]
+  subnet_id              = "${var.subnet_id}"
+
+  connection {
+    user        = "ubuntu"
+    private_key = "${file("secret/EC2Access.pem")}"
+    timeout     = "5m"
+  }
+
+  provisioner "file" {
+    source      = "provisioning/gitlab/"
+    destination = "/opt/gitlab"
+  }
+
+  provisioner "remote-exec" {
+    inline = [<<EOF
+      sudo apt-get update
+      sudo apt-get install docker-ce
+
+      sudo apt-get install -y nfs-common
+      sudo mkdir -p /gitlab-nfs
+      sudo chmod 777 /gitlab-nfs
+      sudo mount ${var.nfs_ip}:/gitlab-nfs /gitlab-nfs
+
+      echo "gotta sleep for some reason" && sleep 5
+      sudo apt-get install -y curl openssh-server ca-certificates
+      curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
+      sudo EXTERNAL_URL="http://${aws_instance.gitlab_host.public_ip}" apt-get install gitlab-ce
+
+    EOF
+    ]
+  }
+
+  tags = {
+    Name = "gitlab"
+  }
+}
